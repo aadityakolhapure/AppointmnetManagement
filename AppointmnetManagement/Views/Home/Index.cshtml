@@ -1,0 +1,165 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Clinic Appointment - Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+
+
+        .hero-btn:hover {
+            transform: scale(1.05) translateY(-3px);
+            box-shadow: 0 10px 25px rgba(220, 38, 38, 0.5);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+            .nav-link::after {
+                content: "";
+                position: absolute;
+                bottom: -3px;
+                left: 50%;
+                width: 0%;
+                height: 2px;
+                background: white;
+                transform: translateX(-50%);
+                transition: all 0.3s ease;
+            }
+
+            .nav-link:hover::after {
+                width: 100%;
+            }
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<body class="bg-white text-gray-900">
+    <!-- Navbar -->
+    <header class="bg-gradient-to-r from-red-600 via-rose-600 to-pink-600 text-white py-5 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center px-6">
+            <h1 class="text-3xl font-extrabold tracking-wide fade-in">🩺 Clinic<span class="text-yellow-300">Care</span></h1>
+            <nav class="space-x-4 md:space-x-8 fade-in text-sm md:text-base">
+                <a href="#" class="nav-link">Home</a>
+                @{
+                    string bookAppointmentUrl = Url.Action("Login", "Account"); 
+
+                    if (Session["UserRole"] != null)
+                    {
+                        
+                        string role = Session["UserRole"].ToString();
+                        if (role == "Patient" || role == "Doctor" || role == "Admin")
+                        {
+                            bookAppointmentUrl = Url.Action(role + "Dashboard", role);
+                        }
+                    }
+                }
+                <a href="@bookAppointmentUrl" class="nav-link">Book Appointment</a>
+
+
+
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative bg-gradient-to-br from-pink-100 via-white to-red-50 py-20 overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full bg-[url('https://media.istockphoto.com/id/1282313277/vector/doctor-online.jpg?s=612x612&w=0&k=20&c=usVmtNMXLM-sMjtp6yauP_4WY2Ykd3AFtahKSib6tsI=')] opacity-20"></div>
+        <div class="container mx-auto px-6 flex flex-col-reverse md:flex-row items-center gap-12 relative z-10">
+            <div class="md:w-1/2 fade-in-up text-center md:text-left">
+                <h2 class="text-4xl md:text-6xl font-extrabold text-red-700 mb-6 leading-tight">
+                    Book Appointments <br /> with <span class="text-rose-600">Trusted Doctors</span>
+                </h2>
+                <p class="text-gray-700 text-base md:text-lg mb-8 leading-relaxed">
+                    A modern, fast, and secure way to schedule your medical appointments. Get quality care from certified doctors without waiting in queues.
+                </p>
+                @{
+                    bookAppointmentUrl = Url.Action("login", "Account"); 
+
+                    if (Session["UserRole"] != null)
+                    {
+                        string role = Session["UserRole"].ToString();
+                        if (role == "Patient" || role == "Doctor" || role == "Admin")
+                        {
+                            bookAppointmentUrl = Url.Action(role + "Dashboard", role);
+                        }
+                    }
+                }
+                <a href="@bookAppointmentUrl"
+                   class="hero-btn inline-block bg-gradient-to-r from-red-600 to-pink-600 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-md transition-transform duration-300 hover:shadow-xl">
+                    Book Now →
+                </a>
+
+            </div>
+
+            <div class="md:w-1/2 fade-in flex justify-center">
+                <img src="https://media.gettyimages.com/id/1332176077/video/animation-of-young-male-consulting-doctor-online-from-his-computer-online-psychological-help.jpg?s=640x640&k=20&c=kaeTyWPPY7Z3I14dh4zbQYn358FzpkELjUE3JAgcjsk="
+                     alt="Clinic"
+                     class="rounded-3xl shadow-2xl border-4 border-red-500 w-full max-w-sm md:max-w-md hover:scale-105 transition-transform duration-700 ease-in-out" />
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="bg-gradient-to-r from-rose-50 to-white py-20">
+        <div class="container mx-auto px-6 text-center">
+            <h3 class="text-3xl md:text-4xl font-bold text-red-600 mb-12 fade-in">Why Choose Us?</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div class="glass-card p-8 rounded-2xl shadow-xl hover:scale-105 transition duration-500 fade-in-up">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3209/3209265.png" alt="Doctors" class="w-16 mx-auto mb-4" />
+                    <h4 class="text-xl font-semibold mb-3 text-red-700">Certified Doctors</h4>
+                    <p class="text-gray-200">Our specialists provide trusted and personalized healthcare solutions for you and your family.</p>
+                </div>
+                <div class="glass-card p-8 rounded-2xl shadow-xl hover:scale-105 transition duration-500 fade-in-up delay-150">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3281/3281300.png" alt="Booking" class="w-16 mx-auto mb-4" />
+                    <h4 class="text-xl font-semibold mb-3 text-red-700">Instant Booking</h4>
+                    <p class="text-gray-200">Book appointments within seconds and receive instant confirmation. No more waiting.</p>
+                </div>
+                <div class="glass-card p-8 rounded-2xl shadow-xl hover:scale-105 transition duration-500 fade-in-up delay-300">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Security" class="w-16 mx-auto mb-4" />
+                    <h4 class="text-xl font-semibold mb-3 text-red-700">Secure System</h4>
+                    <p class="text-gray-200">Your medical records are protected using top-grade encryption and privacy standards.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="book" class="bg-gradient-to-r from-red-600 via-rose-600 to-pink-600 py-20 text-center text-white">
+        <h2 class="text-4xl font-extrabold mb-6 fade-in">Your Health, Our Priority ❤️</h2>
+        <p class="max-w-2xl mx-auto mb-8 text-lg fade-in">Book an appointment today and experience seamless healthcare scheduling designed for you.</p>
+        <a href="#" class="bg-white text-red-600 px-10 py-4 rounded-full text-lg font-semibold hover:bg-gray-100 transition hero-btn">
+            Get Started Now
+        </a>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="bg-gray-900 text-gray-300 py-10">
+        <div class="container mx-auto px-6 text-center space-y-3">
+            <h4 class="text-xl font-semibold text-white">ClinicCare</h4>
+            <p>📍 Satara, Maharashtra, India</p>
+            <p>📧 contact@cliniccare.com | ☎ +91 98765 43210</p>
+            <p class="text-sm mt-4 text-gray-400">&copy; 2025 ClinicCare. All Rights Reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

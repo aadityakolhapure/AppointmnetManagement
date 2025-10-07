@@ -1,0 +1,115 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Patient Dashboard | Clinic Appointment</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-red-600 text-white flex flex-col min-h-screen">
+        <div class="text-center py-6 border-b border-red-500">
+            <h1 class="text-2xl font-bold">Patient</h1>
+            <p class="text-sm text-red-200">Dashboard</p>
+        </div>
+        <nav class="flex-1 mt-6 px-4 space-y-2">
+            <a href="#" class="flex items-center px-4 py-2 rounded hover:bg-red-700 transition">
+                <i data-lucide="home" class="w-5 h-5 mr-2"></i> Dashboard
+            </a>
+            <a href="#" class="flex items-center px-4 py-2 rounded hover:bg-red-700 transition">
+                <i data-lucide="calendar" class="w-5 h-5 mr-2"></i> My Appointments
+            </a>
+            <a href="#" class="flex items-center px-4 py-2 rounded hover:bg-red-700 transition">
+                <i data-lucide="user" class="w-5 h-5 mr-2"></i> Profile
+            </a>
+            <a href="/Account/Logout" class="flex items-center px-4 py-2 rounded hover:bg-red-700 transition">
+                <i data-lucide="log-out" class="w-5 h-5 mr-2"></i> Logout
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-8">
+        <!-- Welcome Section -->
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold text-gray-800">Welcome, <span class="text-red-600">@Session["UserName"]</span></h2>
+            <p class="text-gray-600 mt-2">Here’s a summary of your upcoming appointments.</p>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white shadow rounded-lg p-6 flex items-center space-x-4 hover:shadow-lg transition">
+                <i data-lucide="plus-circle" class="w-8 h-8 text-red-600"></i>
+                <div>
+                    <h3 class="font-bold text-gray-800">Book Appointment</h3>
+                    <p class="text-gray-500 text-sm">Schedule a new visit</p>
+                </div>
+            </div>
+            <div class="bg-white shadow rounded-lg p-6 flex items-center space-x-4 hover:shadow-lg transition">
+                <i data-lucide="calendar-check" class="w-8 h-8 text-red-600"></i>
+                <div>
+                    <h3 class="font-bold text-gray-800">Upcoming Appointments</h3>
+                    <p class="text-gray-500 text-sm">Check your schedule</p>
+                </div>
+            </div>
+            <div class="bg-white shadow rounded-lg p-6 flex items-center space-x-4 hover:shadow-lg transition">
+                <i data-lucide="message-circle" class="w-8 h-8 text-red-600"></i>
+                <div>
+                    <h3 class="font-bold text-gray-800">Contact Clinic</h3>
+                    <p class="text-gray-500 text-sm">Send a message</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upcoming Appointments Table -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Upcoming Appointments</h3>
+            <div class="overflow-x-auto">
+                <table class="min-w-full table-auto border-collapse">
+                    <thead>
+                        <tr class="bg-red-600 text-white">
+                            <th class="px-4 py-2 text-left">Date</th>
+                            <th class="px-4 py-2 text-left">Time</th>
+                            <th class="px-4 py-2 text-left">Doctor</th>
+                            <th class="px-4 py-2 text-left">Specialization</th>
+                            <th class="px-4 py-2 text-left">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b hover:bg-gray-50 transition">
+                            <td class="px-4 py-2">10-Oct-2025</td>
+                            <td class="px-4 py-2">10:00 AM</td>
+                            <td class="px-4 py-2">Dr. Smith</td>
+                            <td class="px-4 py-2">Cardiology</td>
+                            <td class="px-4 py-2">
+                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm">Confirmed</span>
+                            </td>
+                        </tr>
+                        <tr class="border-b hover:bg-gray-50 transition">
+                            <td class="px-4 py-2">12-Oct-2025</td>
+                            <td class="px-4 py-2">2:00 PM</td>
+                            <td class="px-4 py-2">Dr. Adams</td>
+                            <td class="px-4 py-2">Dermatology</td>
+                            <td class="px-4 py-2">
+                                <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-sm">Pending</span>
+                            </td>
+                        </tr>
+                        <!-- More rows can be added dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
