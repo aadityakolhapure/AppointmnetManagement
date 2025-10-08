@@ -18,6 +18,7 @@ namespace AppointmnetManagement.Controllers
             return View();
         }
 
+        //Registration logic with SQL parameterization to prevent SQL injection
         [HttpPost]
         public ActionResult Register(User model)
         {
@@ -26,16 +27,34 @@ namespace AppointmnetManagement.Controllers
                 return View(model);
             }
 
-
             string connStr = ConfigurationManager.ConnectionStrings["ClinicDB"].ConnectionString;
+            int IsActive = 0;
 
             using (SqlConnection con = new SqlConnection(connStr))
             {
-                string query = @"INSERT INTO Users 
-                                (FullName, Email, PasswordHash, Role, Specialization, Address)
-                                VALUES
-                                (@FullName, @Email, @PasswordHash, @Role, @Specialization, @Address)";
+                con.Open();
 
+                string checkEmailQuery = "SELECT COUNT(*) FROM Users WHERE Email = @Email";
+                using (SqlCommand checkCmd = new SqlCommand(checkEmailQuery, con))
+                {
+                    checkCmd.Parameters.AddWithValue("@Email", model.Email);
+                    int exists = (int)checkCmd.ExecuteScalar();
+
+                    if (exists > 0)
+                    {
+                        TempData["ErrorMessage"] = "Email already exists!";
+                        return View(model);
+                    }
+                }
+
+                // 2️⃣ Insert into Users table and get the new UserID
+                string query = @"INSERT INTO Users 
+                         (FullName, Email, PasswordHash, Role, Specialization, Address, IsActive)
+                         OUTPUT INSERTED.UserID
+                         VALUES
+                         (@FullName, @Email, @PasswordHash, @Role, @Specialization, @Address, @IsActive)";
+
+                int newUserId;
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
                     cmd.Parameters.AddWithValue("@FullName", model.Name);
@@ -44,23 +63,36 @@ namespace AppointmnetManagement.Controllers
                     cmd.Parameters.AddWithValue("@Role", model.Role);
                     cmd.Parameters.AddWithValue("@Specialization", (object)model.Specialization ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@Address", (object)model.Address ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@IsActive", IsActive);
 
                     try
                     {
-                        con.Open();
-                        cmd.ExecuteNonQuery();
-                        TempData["SuccessMessage"] = "Registration successful! You can login now.";
-                        return RedirectToAction("Login");
+                        newUserId = (int)cmd.ExecuteScalar(); // Get the new UserID
                     }
                     catch (SqlException ex)
                     {
-                        TempData["ErrorMessage"] = "Data already Exists!!";
+                        TempData["ErrorMessage"] = "Error occurred while registering the user!";
+                        return View(model);
                     }
                 }
-            }
 
-            return View(model);
+                if (model.Role == "Patient")
+                {
+                    string insertPatientQuery = @"INSERT INTO Patients (UserID, Gender, DOB, Phone, Address)
+                                          VALUES (@UserID, 'Unknown', NULL, 'Not Provided', @Address)";
+                    using (SqlCommand patientCmd = new SqlCommand(insertPatientQuery, con))
+                    {
+                        patientCmd.Parameters.AddWithValue("@UserID", newUserId);
+                        patientCmd.Parameters.AddWithValue("@Address", (object)model.Address ?? DBNull.Value);
+                        patientCmd.ExecuteNonQuery();
+                    }
+                }
+
+                TempData["SuccessMessage"] = "Registration successful! You can login now.";
+                return RedirectToAction("Login");
+            }
         }
+
 
         public ActionResult Login()
         {
@@ -68,7 +100,7 @@ namespace AppointmnetManagement.Controllers
         }
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+        //logic with SQL parameterization to prevent SQL injection
         public ActionResult Login(User user)
         {
             if (user == null || string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.Password))
@@ -96,10 +128,20 @@ namespace AppointmnetManagement.Controllers
                             Session["UserEmail"] = reader["Email"];
                             Session["UserSpecialization"] = reader["Specialization"];
                             Session["UserAddress"] = reader["Address"];
+                            Session["IsActive"] = reader["IsActive"];
 
                             string role = reader["Role"].ToString().ToLower();
                             if (role == "admin") return RedirectToAction("AdminDashboard", "Admin");
-                            if (role == "doctor") return RedirectToAction("DoctorDashboard", "Doctor");
+                            if (role == "doctor")
+                            {
+                                if ((int)Session["IsActive"] == 0)
+                                {
+                                    TempData["ErrorMessage"] = "Your account is not activated yet. Please contact admin.";
+                                    Session.Clear();
+                                    return RedirectToAction("Login");
+                                }
+                                return RedirectToAction("DoctorDashboard", "Doctor");
+                            }
                             if (role == "patient") return RedirectToAction("PatientDashboard", "Patient");
                         }
                         else

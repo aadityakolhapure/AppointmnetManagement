@@ -16,5 +16,7 @@ namespace AppointmnetManagement.Models
         public string Specialization { get; set; } // for doctors
 
         public string Address { get; set; }  // for patients
+
+        public int IsActive { get; set; } // for doctors
     }
 }
