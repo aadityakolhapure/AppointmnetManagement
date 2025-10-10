@@ -86,9 +86,19 @@ namespace AppointmnetManagement.Controllers
                         patientCmd.Parameters.AddWithValue("@Address", (object)model.Address ?? DBNull.Value);
                         patientCmd.ExecuteNonQuery();
                     }
+                }else if (model.Role == "Doctor")
+                {
+                    string insertDoctorQuery = @"INSERT INTO Doctors (UserID, Specialization, Phone)
+                                          VALUES (@UserID, @Specialization, 'Not Provided')";
+                    using (SqlCommand doctorCmd = new SqlCommand(insertDoctorQuery, con))
+                        {
+                        doctorCmd.Parameters.AddWithValue("@UserID", newUserId);
+                        doctorCmd.Parameters.AddWithValue("@Specialization", (object)model.Specialization ?? DBNull.Value);
+                        doctorCmd.ExecuteNonQuery();
+                    }
                 }
 
-                TempData["SuccessMessage"] = "Registration successful! You can login now.";
+                    TempData["SuccessMessage"] = "Registration successful! You can login now.";
                 return RedirectToAction("Login");
             }
         }
